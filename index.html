@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Campus Life Planner — an accessible, offline-first planner for tasks and events, built with vanilla HTML, CSS, and JavaScript." />
+  <title>Campus Life Planner</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600&family=Spline+Sans+Mono:wght@500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles/main.css" />
+</head>
+<body>
+  <!-- Accessibility: jump straight to the work -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="app-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-name">Campus&nbsp;Life&nbsp;Planner</span>
+      </div>
+
+      <nav class="primary-nav" aria-label="Primary">
+        <ul>
+          <li><a href="#dashboard">Dashboard</a></li>
+          <li><a href="#records">Records</a></li>
+          <li><a href="#form">Add</a></li>
+          <li><a href="#settings">Settings</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+      </nav>
+
+      <button id="theme-toggle" class="btn btn-ghost theme-toggle" type="button" aria-pressed="false">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+        <span class="visually-hidden">Toggle dark theme</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main" class="wrap" tabindex="-1">
+
+    <!-- Live region: status messages announced politely / assertively -->
+    <div id="announcer-polite" class="visually-hidden" role="status" aria-live="polite"></div>
+    <div id="announcer-assertive" class="visually-hidden" role="alert" aria-live="assertive"></div>
+
+    <!-- ============ DASHBOARD / STATS ============ -->
+    <section id="dashboard" aria-labelledby="dashboard-h">
+      <div class="section-head">
+        <p class="eyebrow">Overview</p>
+        <h1 id="dashboard-h">Your week at a glance</h1>
+      </div>
+
+      <div class="stat-grid">
+        <article class="stat-card">
+          <p class="stat-label">Records</p>
+          <p class="stat-value" id="stat-count">0</p>
+          <p class="stat-sub">tasks &amp; events tracked</p>
+        </article>
+
+        <article class="stat-card">
+          <p class="stat-label">Planned time</p>
+          <p class="stat-value"><span id="stat-total">0</span><span class="stat-unit" id="stat-total-unit">min</span></p>
+          <p class="stat-sub" id="stat-total-hours">0h 0m total</p>
+        </article>
+
+        <article class="stat-card">
+          <p class="stat-label">Top tag</p>
+          <p class="stat-value stat-value--text" id="stat-top-tag">—</p>
+          <p class="stat-sub" id="stat-top-tag-sub">no records yet</p>
+        </article>
+
+        <article class="stat-card stat-card--cap">
+          <p class="stat-label">Weekly cap</p>
+          <div class="cap-meter" role="img" aria-labelledby="cap-status">
+            <div class="cap-fill" id="cap-fill" style="width:0%"></div>
+          </div>
+          <p class="stat-sub" id="cap-status">Set a cap in Settings</p>
+        </article>
+      </div>
+
+      <article class="week-ribbon-card">
+        <div class="card-head">
+          <h2>Last 7 days</h2>
+          <p class="card-sub">Minutes planned per day</p>
+        </div>
+        <div class="week-ribbon" id="week-ribbon" aria-hidden="true"></div>
+        <p class="visually-hidden" id="week-ribbon-text"></p>
+      </article>
+    </section>
+
+    <!-- ============ RECORDS ============ -->
+    <section id="records" aria-labelledby="records-h">
+      <div class="section-head">
+        <p class="eyebrow">Everything you've planned</p>
+        <h2 id="records-h">Records</h2>
+      </div>
+
+      <div class="toolbar">
+        <div class="search-field">
+          <label for="search-input">Search (regex)</label>
+          <input id="search-input" type="search" inputmode="text" autocomplete="off"
+                 placeholder="e.g.  (Meeting|Study)   or   \b\d{2}:\d{2}\b" aria-describedby="search-help" />
+          <p id="search-help" class="field-hint">Live regular-expression search across title and tag.</p>
+          <p id="search-error" class="field-error" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="toolbar-controls">
+          <label class="checkbox">
+            <input id="search-flag-i" type="checkbox" checked />
+            <span>Case-insensitive</span>
+          </label>
+
+          <label class="select-field">
+            <span>Sort by</span>
+            <select id="sort-select">
+              <option value="dueDate-asc">Due date ↑</option>
+              <option value="dueDate-desc">Due date ↓</option>
+              <option value="title-asc">Title A→Z</option>
+              <option value="title-desc">Title Z→A</option>
+              <option value="duration-asc">Duration ↑</option>
+              <option value="duration-desc">Duration ↓</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <!-- Desktop / tablet: table. Mobile: the same rows restyle as cards via CSS. -->
+      <div class="table-scroll">
+        <table class="records-table" aria-describedby="records-h">
+          <caption class="visually-hidden">List of planned tasks and events. Editable.</caption>
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Due date</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Tag</th>
+              <th scope="col"><span class="visually-hidden">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="records-body"><!-- rows injected by ui.js --></tbody>
+        </table>
+      </div>
+
+      <p id="empty-state" class="empty-state" hidden>
+        Nothing here yet. Add your first task below, or load the sample data from Settings.
+      </p>
+    </section>
+
+    <!-- ============ ADD / EDIT FORM ============ -->
+    <section id="form" aria-labelledby="form-h">
+      <div class="section-head">
+        <p class="eyebrow">Capture it</p>
+        <h2 id="form-h">Add a task or event</h2>
+      </div>
+
+      <form id="record-form" class="record-form" novalidate>
+        <input type="hidden" id="field-id" />
+
+        <div class="form-row">
+          <label for="field-title">Title</label>
+          <input id="field-title" name="title" type="text" autocomplete="off"
+                 aria-describedby="err-title" required />
+          <p class="field-error" id="err-title" aria-live="polite"></p>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="field-dueDate">Due date</label>
+            <input id="field-dueDate" name="dueDate" type="date" aria-describedby="err-dueDate" required />
+            <p class="field-error" id="err-dueDate" aria-live="polite"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="field-duration">Duration (minutes)</label>
+            <input id="field-duration" name="duration" type="text" inputmode="decimal"
+                   autocomplete="off" aria-describedby="err-duration" required />
+            <p class="field-error" id="err-duration" aria-live="polite"></p>
+          </div>
+
+          <div class="form-row">
+            <label for="field-tag">Tag</label>
+            <input id="field-tag" name="tag" type="text" list="tag-suggestions"
+                   autocomplete="off" aria-describedby="err-tag" required />
+            <datalist id="tag-suggestions"></datalist>
+            <p class="field-error" id="err-tag" aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="submit-btn" class="btn btn-primary">Add task</button>
+          <button type="button" id="reset-btn" class="btn btn-ghost">Clear</button>
+          <span id="edit-indicator" class="edit-indicator" hidden>Editing existing record</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- ============ SETTINGS ============ -->
+    <section id="settings" aria-labelledby="settings-h">
+      <div class="section-head">
+        <p class="eyebrow">Make it yours</p>
+        <h2 id="settings-h">Settings</h2>
+      </div>
+
+      <div class="settings-grid">
+        <article class="panel">
+          <h3>Weekly time cap</h3>
+          <p class="panel-sub">A target for total minutes planned in the last 7 days. We'll warn you when you go over.</p>
+          <div class="form-row inline">
+            <label for="cap-input">Cap (minutes)</label>
+            <input id="cap-input" type="text" inputmode="numeric" autocomplete="off" />
+          </div>
+          <button id="save-cap" class="btn btn-primary" type="button">Save cap</button>
+        </article>
+
+        <article class="panel">
+          <h3>Display units</h3>
+          <p class="panel-sub">Show durations in minutes, or convert to hours &amp; minutes.</p>
+          <fieldset class="radio-set">
+            <legend class="visually-hidden">Duration units</legend>
+            <label class="radio"><input type="radio" name="units" value="minutes" checked /> <span>Minutes</span></label>
+            <label class="radio"><input type="radio" name="units" value="hours" /> <span>Hours &amp; minutes</span></label>
+          </fieldset>
+        </article>
+
+        <article class="panel">
+          <h3>Data</h3>
+          <p class="panel-sub">Everything is saved on this device. Export to back up, import to restore.</p>
+          <div class="button-cluster">
+            <button id="export-btn" class="btn btn-secondary" type="button">Export JSON</button>
+            <button id="import-btn" class="btn btn-secondary" type="button">Import JSON</button>
+            <button id="clear-btn" class="btn btn-danger" type="button">Delete all</button>
+            <input id="import-file" type="file" accept="application/json,.json" class="visually-hidden" />
+          </div>
+          <p id="data-status" class="field-hint" role="status" aria-live="polite"></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section id="about" aria-labelledby="about-h">
+      <div class="section-head">
+        <p class="eyebrow">About</p>
+        <h2 id="about-h">What this is</h2>
+      </div>
+      <div class="about-body">
+        <p>
+          Campus Life Planner is a small offline-first tool for tracking tasks and events a week throws at a student: classes, deadlines, meetings, and the small things that slip your mind. You jot down what you need to do, when it is due, and how long it will take, and it stays in one place so you can find it again later. Everything lives on your own device; there's nothing to sign up for.
+        </p> 
+        <dl class="contact">
+          <div><dt>GitHub</dt><dd><a id="gh-link" href="https://github.com/k-kuol" rel="noopener">https://github.com/k-kuol</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:k.kuol@alustudent.com">k.kuol@alustudent.com</a></dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <div class="wrap">
+      <p>@2026 · Campus Life Planner · Your tasks and events, all in one place!</p>
+    </div>
+  </footer>
+
+  <!-- Confirm-delete dialog (native, accessible) -->
+  <dialog id="confirm-dialog" class="confirm-dialog">
+    <form method="dialog">
+      <h2 id="confirm-title">Delete this record?</h2>
+      <p id="confirm-body">This can't be undone.</p>
+      <div class="form-actions">
+        <button value="cancel" class="btn btn-ghost">Cancel</button>
+        <button value="confirm" id="confirm-delete" class="btn btn-danger">Delete</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>
