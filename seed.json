@@ -1,0 +1,110 @@
+[
+  {
+    "id": "evt_0001",
+    "title": "Linear algebra problem set",
+    "dueDate": "2026-06-15",
+    "duration": 90,
+    "tag": "Study",
+    "createdAt": "2026-06-10T08:00:00.000Z",
+    "updatedAt": "2026-06-10T08:00:00.000Z"
+  },
+  {
+    "id": "evt_0002",
+    "title": "Group project meeting at 14:30",
+    "dueDate": "2026-06-15",
+    "duration": 60,
+    "tag": "Meeting",
+    "createdAt": "2026-06-11T09:15:00.000Z",
+    "updatedAt": "2026-06-11T09:15:00.000Z"
+  },
+  {
+    "id": "evt_0003",
+    "title": "Review review of lecture notes",
+    "dueDate": "2026-06-14",
+    "duration": 45,
+    "tag": "Self-Study",
+    "createdAt": "2026-06-12T19:30:00.000Z",
+    "updatedAt": "2026-06-12T19:30:00.000Z"
+  },
+  {
+    "id": "evt_0004",
+    "title": "Submit scholarship essay draft",
+    "dueDate": "2026-06-13",
+    "duration": 120,
+    "tag": "Writing",
+    "createdAt": "2026-06-09T07:00:00.000Z",
+    "updatedAt": "2026-06-09T07:00:00.000Z"
+  },
+  {
+    "id": "evt_0005",
+    "title": "Quick stretch break",
+    "dueDate": "2026-06-12",
+    "duration": 5,
+    "tag": "Wellbeing",
+    "createdAt": "2026-06-12T06:00:00.000Z",
+    "updatedAt": "2026-06-12T06:00:00.000Z"
+  },
+  {
+    "id": "evt_0006",
+    "title": "Web dev sprint: DOM and events",
+    "dueDate": "2026-06-11",
+    "duration": 180,
+    "tag": "Coding",
+    "createdAt": "2026-06-08T10:00:00.000Z",
+    "updatedAt": "2026-06-08T10:00:00.000Z"
+  },
+  {
+    "id": "evt_0007",
+    "title": "Campus Leaders Congress keynote",
+    "dueDate": "2026-06-10",
+    "duration": 75,
+    "tag": "Event",
+    "createdAt": "2026-06-05T12:00:00.000Z",
+    "updatedAt": "2026-06-05T12:00:00.000Z"
+  },
+  {
+    "id": "evt_0008",
+    "title": "Full-day hackathon",
+    "dueDate": "2026-06-09",
+    "duration": 480,
+    "tag": "Coding",
+    "createdAt": "2026-06-01T08:00:00.000Z",
+    "updatedAt": "2026-06-01T08:00:00.000Z"
+  },
+  {
+    "id": "evt_0009",
+    "title": "Read constructivism chapter",
+    "dueDate": "2026-06-20",
+    "duration": 50,
+    "tag": "Study",
+    "createdAt": "2026-06-13T16:00:00.000Z",
+    "updatedAt": "2026-06-13T16:00:00.000Z"
+  },
+  {
+    "id": "evt_0010",
+    "title": "Year-end portfolio review",
+    "dueDate": "2026-12-31",
+    "duration": 90,
+    "tag": "Career",
+    "createdAt": "2026-06-02T11:00:00.000Z",
+    "updatedAt": "2026-06-02T11:00:00.000Z"
+  },
+  {
+    "id": "evt_0011",
+    "title": "New year planning session",
+    "dueDate": "2026-01-01",
+    "duration": 30,
+    "tag": "Planning",
+    "createdAt": "2026-01-01T05:00:00.000Z",
+    "updatedAt": "2026-01-01T05:00:00.000Z"
+  },
+  {
+    "id": "evt_0012",
+    "title": "Mentor call 09:00 with advisor",
+    "dueDate": "2026-06-14",
+    "duration": 30,
+    "tag": "Meeting",
+    "createdAt": "2026-06-13T20:00:00.000Z",
+    "updatedAt": "2026-06-13T20:00:00.000Z"
+  }
+]
