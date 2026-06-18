@@ -4,7 +4,7 @@ An offline-first planner for student tasks and events. Track what needs doing, w
 
 **Theme:** Campus Life Planner (Option 2)  
 **Live demo:** https://k-kuol.github.io/campus-life-planner/  
-**Demo video:** https://youtu.be/your-video-id
+**Demo video:** https://youtu.be/your-video-i
 
 ---
 
