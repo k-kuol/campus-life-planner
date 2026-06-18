@@ -55,6 +55,8 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
+To load sample records go to **Settings → Load sample data**.
+
 ## Running the tests
 
 Start the server then open `http://localhost:8000/tests.html`. It runs assertions on validators, search, and sorting and shows a pass/fail summary.

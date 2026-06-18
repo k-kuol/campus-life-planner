@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Campus Life Planner — Tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #18262f; }
+    h1 { font-size: 1.4rem; }
+    .summary { font-weight: 700; padding: .6rem .9rem; border-radius: 8px; margin: 1rem 0; }
+    .all-pass { background: #e3f6ec; color: #1f6b43; }
+    .some-fail { background: #fdecea; color: #a32218; }
+    ul { list-style: none; padding: 0; }
+    li { padding: .3rem .5rem; border-bottom: 1px solid #eee; font-size: .92rem; }
+    .pass::before { content: "✓ "; color: #2f855a; font-weight: 700; }
+    .fail::before { content: "✗ "; color: #c0392b; font-weight: 700; }
+    .fail { color: #c0392b; }
+    code { background: #f3f5f7; padding: .05rem .3rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Campus Life Planner — Test Suite</h1>
+  <p>Open this page over a local server (e.g. <code>python3 -m http.server</code>) so the ES modules load.</p>
+  <div id="summary" class="summary">Running…</div>
+  <ul id="results"></ul>
+
+  <script type="module">
+    import { validateTitle, validateDuration, validateDate, validateTag, duplicateWordWarning } from './scripts/validators.js';
+    import { compileRegex, highlight, filterRecords } from './scripts/search.js';
+    import { sortRecords } from './scripts/state.js';
+
+    const results = [];
+    const eq = (name, got, want) => results.push({ name, ok: JSON.stringify(got) === JSON.stringify(want), got, want });
+    const truthy = (name, got) => results.push({ name, ok: !!got, got, want: 'truthy' });
+    const falsy = (name, got) => results.push({ name, ok: !got, got, want: 'falsy/empty' });
+
+    /* ---- validators ---- */
+    falsy('valid title passes', validateTitle('Read chapter 3'));
+    truthy('leading space rejected', validateTitle(' Read'));
+    truthy('trailing space rejected', validateTitle('Read '));
+    truthy('double space rejected', validateTitle('Read  chapter'));
+    falsy('integer duration valid', validateDuration('90'));
+    falsy('one decimal valid', validateDuration('1.5'));
+    truthy('three decimals rejected', validateDuration('1.555'));
+    truthy('zero rejected', validateDuration('0'));
+    truthy('negative rejected', validateDuration('-5'));
+    falsy('valid date passes', validateDate('2026-06-15'));
+    truthy('bad month rejected', validateDate('2026-13-01'));
+    truthy('impossible day rejected', validateDate('2026-02-30'));
+    falsy('hyphen tag valid', validateTag('Self-Study'));
+    falsy('multi-word tag valid', validateTag('Group Work'));
+    truthy('digit tag rejected', validateTag('Study1'));
+    truthy('duplicate word warns', duplicateWordWarning('the the lecture'));
+    falsy('no duplicate, no warning', duplicateWordWarning('lecture notes'));
+
+    /* ---- search ---- */
+    truthy('valid regex compiles', compileRegex('lab|exam').re);
+    falsy('valid regex no error', compileRegex('lab|exam').error);
+    falsy('invalid regex returns null re', compileRegex('(unclosed').re);
+    truthy('invalid regex returns error', compileRegex('(unclosed').error);
+    eq('highlight wraps match', highlight('Coffee break', compileRegex('coffee').re), '<mark>Coffee</mark> break');
+    eq('highlight escapes html', highlight('<script>x', null), '&lt;script&gt;x');
+    eq('time-token pattern matches', !!'meet 14:30'.match(/\b\d{2}:\d{2}\b/), true);
+
+    const sample = [
+      { title: 'Lab', tag: 'Study', duration: 30, dueDate: '2026-06-10' },
+      { title: 'Exam prep', tag: 'Study', duration: 60, dueDate: '2026-06-12' },
+      { title: 'Coffee', tag: 'Social', duration: 15, dueDate: '2026-06-11' },
+    ];
+    eq('filter by tag matches two', filterRecords(sample, compileRegex('study').re).length, 2);
+    eq('empty pattern returns all', filterRecords(sample, null).length, 3);
+
+    /* ---- sorting ---- */
+    eq('sort duration asc', sortRecords(sample, 'duration', 'asc').map(r => r.duration), [15, 30, 60]);
+    eq('sort duration desc', sortRecords(sample, 'duration', 'desc').map(r => r.duration), [60, 30, 15]);
+    eq('sort title A-Z', sortRecords(sample, 'title', 'asc').map(r => r.title), ['Coffee', 'Exam prep', 'Lab']);
+
+    /* ---- render ---- */
+    const passed = results.filter(r => r.ok).length;
+    const total = results.length;
+    const summary = document.getElementById('summary');
+    summary.textContent = `${passed} / ${total} passed`;
+    summary.className = 'summary ' + (passed === total ? 'all-pass' : 'some-fail');
+
+    const ul = document.getElementById('results');
+    results.forEach(r => {
+      const li = document.createElement('li');
+      li.className = r.ok ? 'pass' : 'fail';
+      li.textContent = r.ok ? r.name : `${r.name} — got ${JSON.stringify(r.got)}, wanted ${JSON.stringify(r.want)}`;
+      ul.appendChild(li);
+    });
+  </script>
+</body>
+</html>
