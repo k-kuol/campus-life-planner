@@ -2,7 +2,7 @@
 
 An offline-first planner for student tasks and events. Track what needs doing, when it's due, and how long it'll take — all saved in your browser, nothing to sign up for.
 
-**Theme:** Campus Life Planner (Option 2)  
+**Theme:** Campus Life Planner  
 **Live demo:** https://k-kuol.github.io/campus-life-planner/  
 **Demo video:** https://youtu.be/your-video-i
 
